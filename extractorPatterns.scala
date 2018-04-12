@@ -19,22 +19,36 @@ object extractorPatterns {
 
   object Branch {
     /* method to contruct branches @see extractorPatterns.tree1 */
-    def apply(left: Tree, right: Tree): Tree = new BranchImpl(left, right)
+    def apply(left: Tree, right: Tree): Tree = {
+      println("Branch#apply called")
+      new BranchImpl(left, right)
+    }
+
     /* extractor method referenced in match expressions @see extractorPatterns.sumLeaves */
-    def unapply(x: Tree): Option[(Tree, Tree)] = x match {
-      case y:BranchImpl => Some(y.left, y.right)
-      case _ => None
+    def unapply(x: Tree): Option[(Tree, Tree)] = {
+      println("Branch#unapply called")
+      x match {
+        case y: BranchImpl => Some(y.left, y.right)
+        case _ => None
+      }
     }
     private class BranchImpl(val left: Tree, val right: Tree) extends Tree
   }
 
   object Leaf {
     /* method to contruct leaves @see tree1 */
-    def apply(x:Int): Tree = new LeafImpl(x);
+    def apply(x: Int): Tree = {
+      val tmp = x.toString
+      println("Leaf#apply called. x = " + tmp)
+      new LeafImpl(x);
+    }
     /* extructor method referenced in match expressions @see extractorPatterns.sumLeaves */
-    def unapply(x: Tree):Option[Int] = x match {
-      case y:LeafImpl => Some(y.x)
-      case _ => None
+    def unapply(x: Tree):Option[Int] = {
+      println("Leaf#apply called.")
+      x match {
+        case y:LeafImpl => Some(y.x)
+        case _ => None
+      }
     }
     private class LeafImpl(val x: Int) extends Tree
   }
@@ -87,13 +101,17 @@ object extractorPatterns {
   }
 
   def printFinds[A](xs: List[Pair[A, String]], x: A) =
-    find(xs.elements, x) match {
+    // "find(xs.elements, x)" doesn't work.
+    find(xs.toIterator, x) match {
       case Some(y) => println(y)
       case None => println("no match")
     }
 
   def main(args: Array[String]): Unit = {
     println("sum of leafs=" + sumLeaves(tree1));
-    printFinds(List(Pair(3, "three"), Pair(4, "four")), 4)
+    val l = List(Pair(3, "three"), Pair(4, "four"))
+
+    printFinds(l, 4)
+    printFinds(l, 10) // no match
   }
 }
