@@ -44,7 +44,7 @@ object extractorPatterns {
     }
     /* extructor method referenced in match expressions @see extractorPatterns.sumLeaves */
     def unapply(x: Tree):Option[Int] = {
-      println("Leaf#apply called.")
+      println("Leaf#unapply called.")
       x match {
         case y:LeafImpl => Some(y.x)
         case _ => None
